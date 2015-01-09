@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+	<head>
+		<meta content="text/html;charset=utf-8" http-equiv="Content-Type"/>
+		<title>Html To BBCode</title>
+  		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"  media="screen">
+		<style>
+		*{padding:0;margin:0;}
+		body{text-align: center;}
+		textarea{width: 400px !important;margin:30px auto;}
+		a{margin:100px auto;}
+		</style>
+	</head>
+	
+	<body>
+		<div class="container">
+			<div class="row">
+				<div class="col-sm-4">
+					<textarea name="" id="" cols="30" rows="20" class="form-control html"><strong>加粗</strong>
+<i>斜体</i>
+<strong><i>加粗斜体</i></strong>
+<a>www.baidu.com</a>
+<ul>
+	<li>1</li>
+	<li>2</li>
+	<li>3</li>
+</ul>
+<ol>
+	<li>1</li>
+	<li>2</li>
+	<li>3</li>
+</ol>
+<pre>
+	<ul>
+		<li>1</li>
+		<li>2</li>
+		<li>3</li>
+	</ul>
+	<ol>
+		<li>1</li>
+		<li>2</li>
+		<li>3</li>
+	</ol>
+</pre>
+<blockquote>
+	blockquote
+</blockquote>
+					</textarea>
+				</div>
+				<div class="col-sm-4">
+					<a class="btn btn-primary">转换</a>
+				</div>
+				<div class="col-sm-4">
+					<textarea name="" id="" cols="30" rows="20"  class="form-control bbcode"></textarea>
+				</div>
+			</div>
+		</div>
+		
+		<script src="js/jquery.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script>
+		$(function ()
+		{
+
+			$('.btn').click(function ()
+			{
+				$('.bbcode').val(convertHtml($('.html').val()));
+			});
+		});
+
+		function convertHtml (html)
+		{
+			var convertMap = {
+				pre: 'code',
+				strong: 'b',
+				i: 'i',
+				em: 'i',
+				blockquote: 'blockquote',
+				a: 'url',
+				img: 'img',
+				li: '*',
+				ol: 'list',
+				ul: 'list',
+				video: 'video'
+			}
+
+			html = html.replace(/<br(\s+)*(\/)*>/g, '\n');
+
+			// convert html to bbcode
+			for (var i in convertMap)
+			{
+				html = convert(i)
+			}
+
+			// filter html tag
+			html = html.replace(/<\w*([^>]+)*>(.*)<\/\w*>/g, function (match, $0, $1)
+	        {
+	            return $1;
+	        });
+
+	        function convert (tag)
+	        {
+	        	var reg = new RegExp('<(' + tag + ')([^>]+)*>([\\s\\S]*?)<\\/' + tag + '>', 'gi');
+
+				html = html.replace(reg, function (match, $0, $1, $2, $3)
+				{
+					if (tag == 'pre')
+					{
+						$2 = $2.replace(/</g, '&lt;')
+						$2 = $2.replace(/>/g, '&gt;')
+					}
+
+					// 防止li跨行匹配
+					if (tag == 'li')
+					{
+						$2 = $2.replace(/<li([^>]+)*>(.*?)<\/li>/g, function (match, $0, $1)
+						{
+							return '[li]' + $1 + '[/li]';
+						});
+					}
+
+					if (tag == 'ol')
+					{
+						return '[' + convertMap[$0] + '=1]' + $2 + '[/' + convertMap[$0] + ']';
+					}
+					else
+					{
+						return '[' + convertMap[$0] + ']' + $2 + '[/' + convertMap[$0] + ']';
+					}
+				});
+
+				return html;
+	        }
+
+	        return html;
+		}
+		</script>
+	</body>
+</html>

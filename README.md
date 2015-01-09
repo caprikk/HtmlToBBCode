@@ -1,7 +1,7 @@
 # HtmlToBBCode
 Html convert to BBCode
 
-convertMap = {
+``convertMap = {
 	pre: 'code',
 	strong: 'b',
 	i: 'i',
@@ -13,4 +13,4 @@ convertMap = {
 	ol: 'list',
 	ul: 'list',
 	video: 'video'
-}
+}``
